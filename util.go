@@ -11,9 +11,11 @@ import (
 	"strconv"
 	"strings"
 
+	"go.uber.org/zap"
+
 	"github.com/mgutz/str"
 
-	"gopkg.in/mgutz/dat.v1/common"
+	"github.com/casualjim/dat/common"
 )
 
 // NameMapping is the routine to use when mapping column names to struct properties
@@ -280,7 +282,7 @@ func ParseDir(dir string, version string) error {
 		if fi.IsDir() {
 			return nil
 		}
-		logger.Debug("MustRegisterFunctionsInDir", "dir", dir, "path", path)
+		logger.Debug("MustRegisterFunctionsInDir", zap.String("dir", dir), zap.String("path", path))
 
 		// bytes, err := ioutil.ReadFile(path) // path is the path to the file.
 		// if err != nil {

@@ -7,11 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/mgutz/logxi/v1"
-
-	"gopkg.in/mgutz/dat.v1"
-	"gopkg.in/mgutz/dat.v1/kvs"
-	"gopkg.in/mgutz/dat.v1/postgres"
+	"github.com/casualjim/dat"
+	"github.com/casualjim/dat/kvs"
+	"github.com/casualjim/dat/postgres"
 )
 
 var testDB *DB
@@ -22,7 +20,6 @@ func init() {
 	sqlDB = realDb()
 	testDB = NewDB(sqlDB, "postgres")
 	dat.Strict = false
-	log.Suppress(true)
 
 	Cache = kvs.NewMemoryKeyValueStore(1 * time.Second)
 	//Cache, _ = kvs.NewDefaultRedisStore()
@@ -56,17 +53,17 @@ func quoteSQL(sqlFmt string, cols ...string) string {
 func realDb() *sql.DB {
 	driver := os.Getenv("DAT_DRIVER")
 	if driver == "" {
-		logger.Fatal("env DAT_DRIVER is not set")
+		panic("env DAT_DRIVER is not set")
 	}
 
 	dsn := os.Getenv("DAT_DSN")
 	if dsn == "" {
-		logger.Fatal("env DAT_DSN is not set")
+		panic("env DAT_DSN is not set")
 	}
 
 	db, err := sql.Open(driver, dsn)
 	if err != nil {
-		logger.Fatal("Database error ", "err", err)
+		panic(fmt.Sprintf("Database error %v", err))
 	}
 
 	return db

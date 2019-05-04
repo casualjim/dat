@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/casualjim/dat"
 	"github.com/mgutz/jo/v1"
-	"gopkg.in/mgutz/dat.v1"
 	"gopkg.in/stretchr/testify.v1/assert"
 )
 

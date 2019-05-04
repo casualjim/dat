@@ -6,7 +6,10 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"time"
+
+	"go.uber.org/zap"
 
 	"github.com/lib/pq"
 )
@@ -179,7 +182,8 @@ func (n *NullTime) UnmarshalJSON(b []byte) error {
 			return n.Scan(t)
 		}
 	}
-	return logger.Error("Cannot parse time", "time", s, "formats", formats)
+	logger.Error("Cannot parse time", zap.String("time", s), zap.Strings("formats", formats))
+	return fmt.Errorf("cannot parse [formats: %v] time: %s", formats, s)
 }
 
 // UnmarshalJSON correctly deserializes a NullBool from JSON

@@ -1,6 +1,8 @@
 package runner
 
-import "gopkg.in/mgutz/dat.v1"
+import (
+	"github.com/casualjim/dat"
+)
 
 type Team struct {
 	ID        int64  `db:"id"`
@@ -107,7 +109,8 @@ func installFixtures() {
 	for _, v := range sqlToRun {
 		_, err := testDB.Exec(v)
 		if err != nil {
-			logger.Fatal("Failed to execute statement", "sql", v, "err", err)
+			panic(err)
+			//logger.Fatal("Failed to execute statement", zap.String("sql", v), zap.Error(err))
 		}
 	}
 }

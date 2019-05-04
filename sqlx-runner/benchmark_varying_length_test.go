@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"gopkg.in/mgutz/dat.v1"
+	"github.com/casualjim/dat"
 )
 
 // These benchmarks compare the total cost of interpolating the SQL then

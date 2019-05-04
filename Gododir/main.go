@@ -38,7 +38,7 @@ func tasks(p *do.Project) {
 	})
 
 	p.Task("test-one", nil, func(c *do.Context) {
-		c.Run(`LOGXI=* go test -run TestTimeout`, do.M{"$in": "sqlx-runner"})
+		c.Run(`go test -run TestTimeout`, do.M{"$in": "sqlx-runner"})
 	}).Src("*.go")
 
 	p.Task("allocs", nil, func(c *do.Context) {

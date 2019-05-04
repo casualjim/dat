@@ -1,5 +1,7 @@
 package dat
 
+import "go.uber.org/zap"
+
 // CallBuilder is a store procedure call builder.
 type CallBuilder struct {
 	Execer
@@ -12,7 +14,7 @@ type CallBuilder struct {
 // NewCallBuilder creates a new CallBuilder for the given sproc name and args.
 func NewCallBuilder(sproc string, args ...interface{}) *CallBuilder {
 	if sproc == "" {
-		logger.Error("Invalid sproc name", "name", sproc)
+		logger.Error("Invalid sproc name", zap.String("name", sproc))
 		return nil
 	}
 	return &CallBuilder{sproc: sproc, args: args, isInterpolated: EnableInterpolation}

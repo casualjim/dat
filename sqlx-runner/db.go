@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"log"
 
+	"go.uber.org/zap"
+
+	"github.com/casualjim/dat"
 	"github.com/jmoiron/sqlx"
-	"gopkg.in/mgutz/dat.v1"
 )
 
 // DB represents an abstract database connection pool.
@@ -74,11 +76,11 @@ func NewDB(db *sql.DB, driverName string) *DB {
 func NewDBFromString(driver string, connectionString string) *DB {
 	db, err := sql.Open(driver, connectionString)
 	if err != nil {
-		logger.Fatal("Database error ", "err", err)
+		logger.Fatal("Database error ", zap.Error(err))
 	}
 	err = db.Ping()
 	if err != nil {
-		logger.Fatal("Could not ping database", "err", err)
+		logger.Fatal("Could not ping database", zap.Error(err))
 	}
 	return NewDB(db, driver)
 }

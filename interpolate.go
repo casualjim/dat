@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 	"unicode/utf8"
+
+	"go.uber.org/zap"
 )
 
 func isUint(k reflect.Kind) bool {
@@ -59,9 +61,11 @@ func Interpolate(sql string, vals []interface{}) (string, []interface{}, error) 
 
 	// If our query is blank and has no args return early
 	// Args with a blank query is an error
+	lg := logger.With(zap.String("sql", sql), zap.Any("args", vals))
 	if sql == "" {
 		if lenVals != 0 {
-			return "", nil, logger.Error("Interpolation error", "err", ErrArgumentMismatch, "sql", sql, "args", vals)
+			lg.Error("Interpolation error", zap.Error(ErrArgumentMismatch))
+			return "", nil, ErrArgumentMismatch
 		}
 		return "", nil, nil
 	}
@@ -73,13 +77,15 @@ func Interpolate(sql string, vals []interface{}) (string, []interface{}, error) 
 		// No args for a query with place holders is an error
 		if lenVals == 0 {
 			if hasPlaceholders {
-				return "", nil, logger.Error("Interpolation error", "err", ErrArgumentMismatch, "sql", sql, "args", vals)
+				lg.Error("Interpolation error", zap.Error(ErrArgumentMismatch))
+				return "", nil, ErrArgumentMismatch
 			}
 			return sql, nil, nil
 		}
 
 		if lenVals > 0 && !hasPlaceholders {
-			return "", nil, logger.Error("Interpolation error", "err", ErrArgumentMismatch, "sql", sql, "args", vals)
+			lg.Error("Interpolation error", zap.Error(ErrArgumentMismatch))
+			return "", nil, ErrArgumentMismatch
 		}
 
 		if !hasPlaceholders {

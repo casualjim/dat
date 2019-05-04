@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/mgutz/logxi/v1"
+	"go.uber.org/zap"
 )
 
-var logger log.Logger
+var logger *zap.Logger
 
 // Strict tells dat to raise errors
 var Strict = false
@@ -53,5 +53,5 @@ func init() {
 		identifierTab[i] = fmt.Sprintf("dat%d", i)
 	}
 
-	logger = log.New("dat")
+	logger = zap.L().Named("dat")
 }

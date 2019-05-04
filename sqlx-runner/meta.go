@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"hash/fnv"
 
-	"gopkg.in/mgutz/dat.v1"
+	"go.uber.org/zap"
+
+	"github.com/casualjim/dat"
 )
 
 // MustCreateMetaTable creates the dat__meta table or panics.
@@ -67,7 +69,7 @@ CREATE TABLE IF NOT EXISTS dat__meta (
 func (db *DB) MustRegisterFunction(name string, version string, body string) {
 	tx, err := db.Begin()
 	if err != nil {
-		logger.Fatal("Could not register function", "err", err, "name", name)
+		logger.Fatal("Could not register function", zap.Error(err), zap.String("name", name))
 	}
 	defer tx.AutoRollback()
 
@@ -84,11 +86,11 @@ func (db *DB) MustRegisterFunction(name string, version string, body string) {
 		SQL(`SELECT id FROM dat__meta WHERE kind = 'function' AND version = $1 AND name = $2`, crc, name).
 		QueryScalar(&metaID)
 	if err != nil && err != sql.ErrNoRows && err != dat.ErrNotFound {
-		logger.Fatal("Could not get metadata for function", "err", err)
+		logger.Fatal("Could not get metadata for function", zap.Error(err))
 	}
 
 	if metaID == 0 {
-		logger.Debug("Adding function", "name", name)
+		logger.Debug("Adding function", zap.String("name", name))
 		commands := []*dat.Expression{
 			dat.Expr(`
 				INSERT INTO dat__meta (kind, version, name)
@@ -106,7 +108,7 @@ func (db *DB) MustRegisterFunction(name string, version string, body string) {
 
 		_, err := tx.ExecMulti(commands...)
 		if err != nil {
-			logger.Fatal("Could not insert function", "err", err)
+			logger.Fatal("Could not insert function", zap.Error(err))
 		}
 	}
 	tx.Commit()

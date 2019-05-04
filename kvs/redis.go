@@ -3,6 +3,8 @@ package kvs
 import (
 	"time"
 
+	"go.uber.org/zap"
+
 	"github.com/garyburd/redigo/redis"
 )
 
@@ -39,7 +41,7 @@ func NewDefaultRedisStore() (KeyValueStore, error) {
 
 // NewRedisStore creates a new instance of RedisTokenStore.
 func NewRedisStore(ns string, host string, password string) (*RedisStore, error) {
-	logger.Info("Creating redis pool", "ns", ns, "host", host, "usingPassword", password == "")
+	logger.Info("Creating redis pool", zap.String("ns", ns), zap.String("host", host), zap.Bool("usingPassword", password == ""))
 	pool := newRedisPool(host, password)
 	return NewRedisStoreFromPool(ns, pool), nil
 }
